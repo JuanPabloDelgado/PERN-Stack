@@ -12,7 +12,7 @@ export class UserRepository {
     return getManager()
       .getRepository(User)
       .createQueryBuilder("User")
-      .select(["User.id", "User.name", "User.lastName"])
+      .select(["User.id", "User.firstName", "User.lastName"])
       .getMany();
   }
 
@@ -26,7 +26,7 @@ export class UserRepository {
       });
   }
 
-  updateUser(idUser: string, newUserData: User): Promise<UpdateResult> {
+  updateUser(idUser: number, newUserData: User): Promise<UpdateResult> {
     return getManager()
       .getRepository(User)
       .update(
@@ -37,7 +37,7 @@ export class UserRepository {
       );
   }
 
-  deleteUser(idUser: string): Promise<DeleteResult> {
+  deleteUser(idUser: number): Promise<DeleteResult> {
     return getManager()
       .getRepository(User)
       .delete({
