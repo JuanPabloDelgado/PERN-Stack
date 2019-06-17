@@ -1,18 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 import { createConnection } from "typeorm";
-import entities from "./entities";
+const typeormConfig = require("../ormconfig.json");
 
-createConnection({
-  type: "postgres",
-  host: "localhost",
-  port: 5432,
-  username: "postgres",
-  password: "postgres",
-  database: "Test",
-  entities: [entities.User],
-  synchronize: true
-})
+createConnection(typeormConfig)
   .then(connection => {
     console.log("Connection to BD done");
   })
