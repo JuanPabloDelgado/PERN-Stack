@@ -8,25 +8,14 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
-import Menu from "./components/menu/menu";
-import UserCard from "./components/card/card";
-
-const card = {
-  display: "flex",
-  "flex-direction": "column",
-  width: "250px",
-  height: "250px",
-  "align-items": "flex-start",
-  margin: "10px"
-};
-
 class App extends Component {
   constructor() {
     super();
     this.state = {
       firstName: "",
       lastName: "",
-      users: []
+      users: [],
+      editId: ""
     };
     this.addUser = this.addUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -34,23 +23,47 @@ class App extends Component {
 
   addUser(e) {
     e.preventDefault();
-    fetch("http://localhost:5000/users", {
-      method: "POST",
-      body: JSON.stringify(this.state),
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json"
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          firstName: "",
-          lastName: ""
-        });
-        this.fetchUsers();
+
+    if (this.state.editId) {
+      fetch(`http://localhost:5000/users/${this.state.editId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          firstName: this.state.firstName,
+          lastName: this.state.lastName
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json"
+        }
       })
-      .catch(err => console.log("Error: ", err));
+        .then(data => {
+          this.fetchUsers();
+          this.setState({
+            firstName: "",
+            lastName: "",
+            editId: ""
+          });
+        })
+        .catch(err => console.log("Error: ", err));
+    } else {
+      fetch("http://localhost:5000/users", {
+        method: "POST",
+        body: JSON.stringify(this.state),
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          this.setState({
+            firstName: "",
+            lastName: ""
+          });
+          this.fetchUsers();
+        })
+        .catch(err => console.log("Error: ", err));
+    }
   }
 
   handleChange(e) {
@@ -66,6 +79,35 @@ class App extends Component {
       .then(data => this.setState({ users: data }));
   }
 
+  editUser(id) {
+    fetch(`http://localhost:5000/users/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          editId: data.id
+        });
+      })
+      .catch(err => console.log("Error: ", err));
+  }
+
+  deleteUser(id) {
+    if (window.confirm("Está seguro de querer eliminar este usuario")) {
+      fetch(`http://localhost:5000/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json"
+        }
+      })
+        .then(data => {
+          this.fetchUsers();
+        })
+        .catch(err => console.log("Error: ", err));
+    }
+  }
+
   componentDidMount() {
     this.fetchUsers();
   }
@@ -74,7 +116,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Menu />
+          <Button style={{ color: "white" }}>PERN STACK</Button>
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         <div>
@@ -112,11 +154,31 @@ class App extends Component {
         <div id="listCards">
           {this.state.users.map(user => {
             return (
-              <UserCard
-                key={user.id}
-                firstName={user.firstName}
-                lastName={user.lastName}
-              />
+              <Card className="card" key={user.id}>
+                <CardContent>
+                  <label>First Name</label>
+                  <Typography>{user.firstName}</Typography>
+                  <label>Last Name</label>
+                  <Typography>{user.lastName}</Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => this.editUser(user.id)}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => this.deleteUser(user.id)}
+                  >
+                    Delete
+                  </Button>
+                </CardActions>
+              </Card>
             );
           })}
         </div>

@@ -17,8 +17,7 @@ router.post("/", (req, res) => {
 });
 
 router.put("/:userId", (req, res) => {
-  userRepository
-    .updateUser(req.params.userId, req.body)
+  userRepository.updateUser(req.params.userId, req.body)
     .then(() => res.send("OK"));
 });
 

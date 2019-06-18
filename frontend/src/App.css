@@ -36,6 +36,15 @@
   justify-content: space-evenly;
 }
 
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: 250px;
+  align-items: flex-start;
+  margin: 10px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
