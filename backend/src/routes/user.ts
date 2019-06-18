@@ -2,7 +2,6 @@ import { Router } from "express";
 import { UserRepository } from "../repository/user-repository";
 
 const userRepository = new UserRepository();
-
 const router = Router();
 
 router.get("/", (req, res) => {

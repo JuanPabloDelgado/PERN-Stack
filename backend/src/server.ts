@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 import { createConnection } from "typeorm";
+import routes from "./routes";
 const typeormConfig = require("../ormconfig.json");
 
 createConnection(typeormConfig)
@@ -11,10 +12,8 @@ createConnection(typeormConfig)
 
 const app = express();
 app.use(cors());
-app.use(express.json);
+app.use(express.json());
 app.set("port", 5000);
-
-import routes from "./routes";
 
 app.use("/users", routes.user);
 
